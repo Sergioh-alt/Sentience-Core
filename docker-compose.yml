@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: eea2026_postgres
+    labels: ["eea2026=true"]
+    environment: {POSTGRES_USER: aap_user, POSTGRES_PASSWORD: aap_secure_password, POSTGRES_DB: aap_2026_db}
+    volumes: ["eea_pg:/var/lib/postgresql/data"]
+    ports: ["5432:5432"]
+    restart: unless-stopped
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: eea2026_chroma
+    labels: ["eea2026=true"]
+    volumes: ["eea_chroma:/chroma/chroma"]
+    ports: ["8080:8000"]
+    restart: unless-stopped
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: eea2026_n8n
+    labels: ["eea2026=true"]
+    ports: ["5678:5678"]
+    volumes: ["eea_n8n:/home/node/.n8n"]
+    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    container_name: eea2026_redis
+    labels: ["eea2026=true"]
+    ports: ["6379:6379"]
+    restart: unless-stopped
+volumes: {eea_pg: {}, eea_chroma: {}, eea_n8n: {}}
+networks:
+  default:
+    name: eea2026_network

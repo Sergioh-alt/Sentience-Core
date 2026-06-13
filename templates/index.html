@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEA-2026 ANT | Overseer v1.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050508;
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.3);
+            --card-bg: rgba(15, 15, 25, 0.6);
+            --text: #e0e0e0;
+            --danger: #ff3333;
+            --success: #00ff88;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 20%, #101020 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, #101020 0%, transparent 40%),
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 242, 255, 0.1);
+        }
+
+        .logo-area h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 242, 255, 0.2);
+        }
+
+        h3 {
+            margin: 0 0 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .stat-group {
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #00ff88);
+            width: 0%;
+            transition: width 1s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .market-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .market-item {
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            border-left: 4px solid #333;
+        }
+
+        .market-item.buy { border-left-color: var(--success); }
+        .market-item.sell { border-left-color: var(--danger); }
+
+        .whale-radar-box {
+            background: rgba(0, 242, 255, 0.05);
+            border: 1px solid var(--accent);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #888;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-area">
+            <h1>EEA-2026 ANT</h1>
+            <div id="mode-indicator" class="status-badge">Sincronizando...</div>
+        </div>
+        <div>
+            <span id="usd-cop" style="font-family: 'JetBrains Mono'; margin-right: 20px;">COP: 0</span>
+            <button class="logout-btn" onclick="location.href='/logout'">Desconectar</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card" style="grid-column: span 2;">
+            <h3>HUD Gráfico — Velas Japonesas</h3>
+            <div id="tvchart" style="width: 100%; height: 300px;"></div>
+        </div>
+
+        <div class="card">
+            <h3>Capital Hardware</h3>
+            <div class="stat-group">
+                <div class="stat-label">Net Worth (USD)</div>
+                <div class="stat-value" id="networth" style="font-size: 2rem;">$0.00</div>
+            </div>
+            <div class="stat-group">
+                <div class="stat-label">Estimado (COP)</div>
+                <div id="networth-cop" style="font-size: 1.2rem; font-weight: 700; color: #888;">0 COP</div>
+            </div>
+            <div class="progress-container" style="margin-top: 20px;">
+                <div id="goal-fill" class="progress-bar"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #666; margin-top: 5px;">
+                <span>META: 15M COP</span>
+                <span id="goal-pct">0%</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Telemetría de Sistema</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="stat-group">
+                    <div class="stat-label">RAM Usage</div>
+                    <div class="stat-value" id="sys-ram" style="font-size: 1.2rem;">0%</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value" id="sys-status" style="font-size: 1.2rem; color: var(--success);">NOMINAL</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div class="stat-label">Order Book Imbalance (Fase Pro)</div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                    <div id="ob-ratio" style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">1.00x</div>
+                    <div id="ob-status" style="font-size: 0.7rem; color: #888;">NEUTRAL</div>
+                </div>
+                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 10px; overflow: hidden;">
+                    <div id="ob-bar" style="width: 50%; height: 100%; background: var(--accent); transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+            
+            <div class="whale-radar-box" style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="stat-label">WHALE RADAR</div>
+                    <div id="whale-text" style="font-size: 0.7rem; color: var(--accent); font-weight: bold;">NEUTRAL</div>
+                </div>
+                <div class="sentiment-bar-container" style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                    <div id="whale-bar" style="width: 50%; height: 100%; background: var(--accent); transition: width 0.5s;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <div class="stat-label">GEOPOLITICAL RISK</div>
+                    <div id="geo-text" style="font-size: 0.7rem; color: #888; font-weight: bold;">ESTABLE</div>
+                </div>
+                <div class="risk-bar-container" style="background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                    <div id="geo-bar" style="width: 20%; height: 100%; background: var(--success); transition: width 0.5s;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔴 Mercado Cripto (24/7)</h3>
+            <div id="market-data-crypto" class="market-list">
+                Cargando inteligencia artificial...
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🏛️ Activos Globales (Wall Street)</h3>
+            <div id="market-data-global" class="market-list">
+                Cargando inteligencia artificial...
+            </div>
+        </div>
+
+        <!-- NUEVO: Panel de Entrenamiento -->
+        <div class="card" style="grid-column: span 2;">
+            <h3>🎓 Córtex: Centro de Entrenamiento (Reinforcement Learning)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <canvas id="learningChart" style="max-height: 200px;"></canvas>
+                </div>
+                <div>
+                    <div class="stat-group">
+                        <div class="stat-label">Lecciones Aprendidas (Q-States)</div>
+                        <div class="stat-value" id="q-states" style="color: var(--accent);">0</div>
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <div class="stat-group">
+                            <div class="stat-label">Shadow Trades Activos</div>
+                            <div class="stat-value" id="shadow-active" style="font-size: 1.2rem;">0</div>
+                        </div>
+                        <div class="stat-group">
+                            <div class="stat-label">Precisión (Accuracy)</div>
+                            <div class="stat-value" id="q-accuracy" style="font-size: 1.2rem; color: var(--success);">0%</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.65rem; color: #888; line-height: 1.4;">
+                        El bot está simulando miles de operaciones en segundo plano para poblar su matriz de conocimiento sin riesgo de capital.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NUEVO: Historial de Debates -->
+        <div class="card">
+            <h3>🎭 Registro de Debates de IA</h3>
+            <div id="debate-history" class="market-list" style="max-height: 300px; overflow-y: auto; font-size: 0.75rem;">
+                Escuchando el consenso de los agentes...
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+        // Init TradingView Chart
+        let chart, lineSeries;
+        try {
+            const chartProperties = {
+                width: document.getElementById('tvchart').clientWidth,
+                height: 300,
+                layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#e0e0e0' },
+                grid: { vertLines: { color: 'rgba(255, 255, 255, 0.05)' }, horzLines: { color: 'rgba(255, 255, 255, 0.05)' } },
+                timeScale: { timeVisible: true, secondsVisible: false }
+            };
+            chart = LightweightCharts.createChart(document.getElementById('tvchart'), chartProperties);
+            lineSeries = chart.addLineSeries({ color: '#00f2ff', lineWidth: 2 });
+        } catch(err) {
+            console.error("Fallo al inicializar gráfico:", err);
+        }
+
+        let lastTimestamp = 0;
+        let trackedTicker = "";
+
+        window.addEventListener('resize', () => {
+            if (chart) chart.resize(document.getElementById('tvchart').clientWidth, 300);
+        });
+
+        // Init Learning Chart (Chart.js)
+        const ctxLearning = document.getElementById('learningChart').getContext('2d');
+        const learningChart = new Chart(ctxLearning, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 10}, (_, i) => i + 1),
+                datasets: [{
+                    label: 'Conocimiento (Q-Table)',
+                    data: [0,0,0,0,0,0,0,0,0,0],
+                    borderColor: '#00f2ff',
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { display: false },
+                    y: { ticks: { color: '#666' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+
+        async function updateTrainingHUD() {
+            try {
+                const r = await fetch('/api/training');
+                const d = await r.json();
+                document.getElementById('q-states').innerText = d.q_stats.total_states;
+                document.getElementById('shadow-active').innerText = d.shadow_active;
+                document.getElementById('q-accuracy').innerText = d.q_stats.accuracy.toFixed(1) + "%";
+                
+                // Update Learning Curve Chart
+                if (d.q_stats.total_states > 0) {
+                    // Generamos una curva visual basada en el progreso de estados
+                    const points = Array.from({length: 10}, (_, i) => d.q_stats.total_states * (0.5 + 0.05 * i));
+                    learningChart.data.datasets[0].data = points;
+                    learningChart.update();
+                }
+
+                const r2 = await fetch('/api/debates');
+                const debates = await r2.json();
+                let html = "";
+                debates.reverse().forEach(db => {
+                    const icon = db.outcome === "OK" ? "✅" : "❌";
+                    html += `<div style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${icon} ${db.ticker}</strong>
+                            <span style="color: #666;">${db.decision}</span>
+                        </div>
+                        <div style="color: #aaa; margin-top: 4px;">${db.reason}</div>
+                    </div>`;
+                });
+                if (html) document.getElementById('debate-history').innerHTML = html;
+            } catch(e) { console.warn("Training API not ready yet."); }
+        }
+
+        async function updateHUD() {
+            try {
+                const r = await fetch('/api/data'); 
+                if (r.status === 401) { window.location.href = '/login'; return; }
+                const d = await r.json();
+                if (!d) return;
+
+                const modeEl = document.getElementById('mode-indicator');
+                if (d.is_active) {
+                    modeEl.innerText = d.system_mode === "LIVE-TESTNET" ? "TESTNET ACTIVO" : "MOCK MODE";
+                    modeEl.style.background = "rgba(0, 255, 136, 0.1)";
+                    modeEl.style.color = "var(--success)";
+                    modeEl.style.borderColor = "var(--success)";
+                } else {
+                    modeEl.innerText = "SISTEMA EN PAUSA (Enviar /start)";
+                    modeEl.style.background = "rgba(255, 136, 0, 0.1)";
+                    modeEl.style.color = "#ff8800";
+                    modeEl.style.borderColor = "#ff8800";
+                }
+                
+                if (d.wallet) {
+                    document.getElementById('networth').innerText = `$${(d.wallet.net_worth || 0).toLocaleString()}`;
+                    document.getElementById('networth-cop').innerText = new Intl.NumberFormat('es-CO').format(d.wallet.goal_cop || 0) + " COP";
+                    document.getElementById('goal-pct').innerText = `${d.wallet.goal_progress || 0}%`;
+                    document.getElementById('goal-fill').style.width = `${d.wallet.goal_progress || 0}%`;
+                }
+
+                if (d.currencies) {
+                    document.getElementById('usd-cop').innerText = "USD/COP: " + (d.currencies.USDCOP || 0);
+                }
+
+                if (d.health) {
+                    document.getElementById('sys-ram').innerText = d.health.ram || "0%";
+                    document.getElementById('sys-status').innerText = d.health.status || "NOMINAL";
+                }
+
+                // Whale & Geo (Actualización Blindada)
+                if (d.whale_sentiment) {
+                    const ws = d.whale_sentiment.score || 50;
+                    const whaleBar = document.getElementById('whale-bar');
+                    const whaleText = document.getElementById('whale-text');
+                    if (whaleBar) {
+                        whaleBar.style.width = ws + "%";
+                        whaleBar.style.background = ws > 55 ? 'var(--success)' : (ws < 45 ? 'var(--danger)' : 'var(--accent)');
+                    }
+                    if (whaleText) whaleText.innerText = d.whale_sentiment.bias || "NEUTRAL";
+                }
+
+                if (d.geopolitical_risk !== undefined) {
+                    const gr = d.geopolitical_risk * 100;
+                    const geoBar = document.getElementById('geo-bar');
+                    const geoText = document.getElementById('geo-text');
+                    if (geoBar) {
+                        geoBar.style.width = gr + "%";
+                        geoBar.style.background = gr > 70 ? 'var(--danger)' : (gr > 40 ? '#ff8800' : 'var(--success)');
+                    }
+                    if (geoText) geoText.innerText = gr > 70 ? "RIESGO EXTREMO" : (gr > 40 ? "Riesgo moderado" : "ESTABLE");
+                }
+                
+                const obRatio = d.ob_imbalance || 1.0; 
+                if (document.getElementById('ob-ratio')) {
+                    document.getElementById('ob-ratio').innerText = obRatio.toFixed(2) + 'x';
+                    document.getElementById('ob-status').innerText = obRatio > 1.05 ? 'BULLISH' : (obRatio < 0.95 ? 'BEARISH' : 'NEUTRAL');
+                    const barWidth = Math.min(Math.max((obRatio - 0.5) * 100, 0), 100);
+                    document.getElementById('ob-bar').style.width = barWidth + '%';
+                }
+
+                // Mercado Inteligencia
+                const cryptoList = document.getElementById('market-data-crypto');
+                const globalList = document.getElementById('market-data-global');
+                
+                if (d.market_intelligence && Object.keys(d.market_intelligence).length > 0) {
+                    let htmlCrypto = "";
+                    let htmlGlobal = "";
+                    
+                    for (const t in d.market_intelligence) {
+                        const i = d.market_intelligence[t];
+                        const isSelected = window.selectedTicker === t ? 'border: 1px solid var(--accent); background: rgba(0,242,255,0.1);' : '';
+                        const sideClass = i.recomendacion === "BUY" ? "buy" : (i.recomendacion === "SELL" ? "sell" : "");
+                        
+                        const itemHtml = `
+                            <div class="market-item ${sideClass}" style="cursor: pointer; ${isSelected}" onclick="window.selectedTicker='${t}'; updateHUD();">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-weight: 700; color: var(--accent);">${t}</span>
+                                    <span style="font-family: monospace; font-size: 0.9rem;">$${(i.precio || 0).toLocaleString()}</span>
+                                </div>
+                                <div style="margin-top: 5px; font-size: 0.75rem; color: #aaa;">
+                                    <span style="color: ${i.recomendacion==='BUY'?'var(--success)':'#ff8800'}; font-weight:700;">${i.recomendacion}</span> 
+                                    • ${i.justificacion}
+                                </div>
+                            </div>`;
+                        
+                        if (t.includes('-USD')) htmlCrypto += itemHtml;
+                        else htmlGlobal += itemHtml;
+                    }
+
+                    if (htmlCrypto !== "") cryptoList.innerHTML = htmlCrypto;
+                    if (htmlGlobal !== "") globalList.innerHTML = htmlGlobal;
+
+                    if (!window.selectedTicker) window.selectedTicker = Object.keys(d.market_intelligence)[0];
+                }
+
+                    if (window.selectedTicker && lineSeries) {
+                        const trackedData = d.market_intelligence[window.selectedTicker];
+                        if (trackedData && trackedData.precio > 0) {
+                            if (trackedTicker !== window.selectedTicker) {
+                                trackedTicker = window.selectedTicker;
+                                lineSeries.setData([]); 
+                                document.querySelector('.card h3').innerText = `HUD Gráfico — ${trackedTicker}`;
+                            }
+                            const ts = Math.floor(Date.now() / 1000);
+                            if (ts > lastTimestamp) {
+                                lineSeries.update({ time: ts, value: trackedData.precio });
+                                lastTimestamp = ts;
+                            }
+                        }
+                    }
+                }
+            } catch (e) { console.error("Error en updateHUD:", e); }
+        }
+        setInterval(updateHUD, 3000); updateHUD();
+        setInterval(updateTrainingHUD, 5000); updateTrainingHUD();
+    </script>
+</body>
+</html>

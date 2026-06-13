@@ -1,0 +1,31 @@
+# EEA-2026-ANT: Dependencias reales del proyecto
+# Generado para Python 3.12 en Windows (i3 10ª gen, 20GB RAM)
+# Instalar con: pip install -r requirements.txt
+
+# === Core Trading ===
+ccxt>=4.4.0
+yfinance>=0.2.40
+pandas>=2.2.0
+pandas_ta>=0.3.14b1
+
+# === IA (APIs remotas — sin LLMs locales) ===
+requests>=2.32.0
+
+# === Web / HUD ===
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# === Hardware Monitor ===
+psutil>=6.0.0
+
+# === WebSockets (Amígdala) ===
+websockets>=13.0
+
+# === Utilidades ===
+pytz>=2024.1
+python-dotenv>=1.0.0
+
+# === Machine Learning (Fase 1 y 2) ===
+torch>=2.2.0
+scikit-learn>=1.4.0
+transformers>=4.38.0
