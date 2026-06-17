@@ -68,7 +68,6 @@ graph TD
     B --> C[Debate]
     C --> D[Decide]
     D --> E[Execute]
-    E --> F[/cite_end]
     E --> F[Learn]
     F --> G[Improve]
     G --> A
