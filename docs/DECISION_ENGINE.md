@@ -223,6 +223,3 @@ Its purpose is to ensure that:
 
 **Many partial perspectives become one coherent action.**
 
----
-
-**END OF DOCUMENT**
