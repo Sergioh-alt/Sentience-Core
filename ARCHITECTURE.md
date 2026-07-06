@@ -423,6 +423,3 @@ It is defined by its behavior over time.
 
 Sentience Core is designed to evolve into a persistent cognitive infrastructure that improves through experience rather than static design.
 
----
-
-## End of Architecture Document
