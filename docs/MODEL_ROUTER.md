@@ -232,6 +232,3 @@ Better intelligence is not always the most expensive model.
 
 The Model Router is the abstraction layer that allows Sentience Core to behave like a model-agnostic cognitive system, enabling adaptability, redundancy, and long-term architectural survival.
 
----
-
-**END OF DOCUMENT**
