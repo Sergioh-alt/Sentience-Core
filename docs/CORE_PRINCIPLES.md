@@ -170,6 +170,3 @@ It is an evolving structure for:
 
 independently of any single model or application.
 
----
-
-END OF DOCUMENT
