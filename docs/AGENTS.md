@@ -30,7 +30,6 @@ Critical outputs require agreement between multiple agents or validation by a Gu
 
 ```mermaid
 graph TD
-
 Input[User / External Input] --> Analyst
 Input --> Strategist
 
@@ -49,123 +48,102 @@ Guardian --> ValidationLayer
 ValidationLayer --> Executor
 Executor --> Memory
 Memory --> Analyst
+```
 
 ---
 
-Core Agents
-Analyst Agent
+## Core Agents
 
-Role:
-Interprets raw input and transforms it into structured understanding.
+### Analyst Agent
+**Role:** Interprets raw input and transforms it into structured understanding.
 
-Responsibilities:
+**Responsibilities:**
+- Data interpretation
+- Pattern recognition
+- Context extraction
+- Feature summarization
 
-Data interpretation
-Pattern recognition
-Context extraction
-Feature summarization
-
-Output:
-Structured knowledge objects.
+**Output:** Structured knowledge objects.
 
 ---
 
-Strategist Agent
+### Strategist Agent
+**Role:** Generates possible action paths based on analyzed data.
 
-Role:
-Generates possible action paths based on analyzed data.
+**Responsibilities:**
+- Scenario generation
+- Risk/benefit estimation
+- Strategy comparison
+- Long-term planning logic
 
-Responsibilities:
-
-Scenario generation
-Risk/benefit estimation
-Strategy comparison
-Long-term planning logic
-
-Output:
-Action proposals ranked by confidence.
+**Output:** Ranked action proposals.
 
 ---
 
-Executor Agent
+### Executor Agent
+**Role:** Executes validated decisions.
 
-Role:
-Translates decisions into actionable operations.
+**Responsibilities:**
+- Tool invocation
+- API execution
+- Workflow orchestration
+- State mutation
 
-Responsibilities:
-
-Tool invocation
-API execution
-Workflow orchestration
-State mutation
-
-Constraint:
-Cannot decide independently. Only executes validated plans.
+**Constraint:** Cannot decide independently. Only executes approved actions.
 
 ---
 
-Guardian Agent
+### Guardian Agent
+**Role:** System safety and constraint enforcement layer.
 
-Role:
-Acts as system constraint enforcement layer.
+**Responsibilities:**
+- Risk validation
+- Safety checks
+- Resource limits
+- Policy enforcement
+- Blocking unsafe actions
 
-Responsibilities:
-
-Risk validation
-Safety checks
-Resource limits enforcement
-Policy compliance
-Blocking unsafe execution
-
-Behavior:
-
-Can override any agent
-Can cancel execution paths
-Acts as final gate before execution
+**Capabilities:**
+- Can override any agent
+- Can stop execution
+- Acts as final approval gate
 
 ---
 
-Memory Engine Agent
+### Memory Engine Agent
+**Role:** Persistent memory and knowledge storage.
 
-Role:
-Maintains persistent system memory.
+**Responsibilities:**
+- Store experiences
+- Retrieve relevant context
+- Link historical outcomes
+- Build knowledge graph
 
-Responsibilities:
-
-Storing structured experiences
-Retrieving relevant knowledge
-Linking past outcomes to current context
-Building long-term knowledge graphs
-
-Storage Model:
-
-Domain-based memory segmentation
-Semantic retrieval layer
-Temporal indexing
+**Storage Model:**
+- Domain-based memory segmentation
+- Semantic retrieval
+- Temporal indexing
 
 ---
 
-Decision Engine (Meta-Agent)
+### Decision Engine (Meta-Agent)
+**Role:** Aggregates all agent outputs into final decision.
 
-Role:
-Aggregates outputs from multiple agents into a single decision.
+**Responsibilities:**
+- Weight agent outputs
+- Resolve conflicts
+- Compute confidence scores
+- Produce final decision
 
-Responsibilities:
-
-Weighting agent outputs
-Conflict resolution
-Confidence scoring
-Final decision synthesis
-
-Behavior:
-Acts as arbitration layer, not intelligence source.
+**Note:** Not an intelligence source. Only arbitration.
 
 ---
 
-Agent Communication Protocol
+## Agent Communication Protocol
 
-Agents communicate using structured messages:
+Agents communicate using structured JSON messages:
 
+```json
 {
   "agent": "Analyst",
   "type": "analysis_output",
@@ -173,51 +151,50 @@ Agents communicate using structured messages:
   "confidence": 0.87,
   "timestamp": "ISO-8601"
 }
+```
 
 ---
 
-Decision Flow
-1.Input received
-2.Analyst processes input
-3.Strategist generates options
-4.Decision Engine aggregates outputs
-5.Guardian validates
-6.Executor performs action
-7.Memory Engine stores result
-8.Feedback loop updates system weights
+## Decision Flow
+
+1. Input received
+2. Analyst processes input
+3. Strategist generates options
+4. Decision Engine aggregates results
+5. Guardian validates decision
+6. Executor performs action
+7. Memory Engine stores outcome
+8. Feedback loop updates system behavior
 
 ---
 
-Conflict Resolution
+## Conflict Resolution
 
 If agents disagree:
-
--Decision Engine assigns weighted confidence scores
--Guardian can override all outputs
--Memory history influences weighting
--Lowest-risk and highest-consistency path is selected
+- Decision Engine assigns confidence weights
+- Guardian has final override authority
+- Memory influences weighting
+- System selects safest and most consistent path
 
 ---
 
-Failure Handling
+## Failure Handling
 
 If any agent fails:
-
--System degrades gracefully
--Other agents continue operation
--Memory logs failure event
--Recovery strategies are generated by Strategist
-
----
-
-System Philosophy
-
-Agents are not independent AI entities.
-
-They are cognitive functions inside a unified architecture designed to simulate structured intelligence.
-
-The goal is not autonomy of agents, but coherent distributed cognition.
+- System continues with remaining agents
+- Failure is logged in Memory Engine
+- Recovery strategies are generated
+- System degrades gracefully
 
 ---
 
-END OF DOCUMENT
+## System Philosophy
+
+Agents are not independent intelligences.
+They are functional cognitive modules inside a unified system designed for structured decision-making.
+
+The goal is not autonomy of agents, but coordinated intelligence.
+
+---
+
+**END OF DOCUMENT**
