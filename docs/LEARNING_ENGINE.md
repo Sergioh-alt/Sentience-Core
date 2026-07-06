@@ -200,6 +200,3 @@ The Learning Engine is not a model trainer.
 
 It is the mechanism through which Sentience Core becomes increasingly aligned with reality over time, transforming execution history into adaptive intelligence.
 
----
-
-**END OF DOCUMENT**
