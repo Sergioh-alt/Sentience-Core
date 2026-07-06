@@ -209,8 +209,5 @@ The Memory Engine transforms Sentience Core from:
 
 into:
 
-**A system that accumulates intelligence over time**
+**A system that accumulates intelligence over time.**
 
----
-
-**END OF DOCUMENT**
