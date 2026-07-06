@@ -195,6 +195,3 @@ They are functional cognitive modules inside a unified system designed for struc
 
 The goal is not autonomy of agents, but coordinated intelligence.
 
----
-
-**END OF DOCUMENT**
