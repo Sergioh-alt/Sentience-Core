@@ -771,7 +771,7 @@ This repository focuses only on the infrastructure required to support these sys
 Clone the repository
 
 ```bash
-git clone https://github.com/your-user/sentience-core.git
+git clone https://github.com/Sergioh-alt/sentience-core.git
 ```
 
 Install dependencies
